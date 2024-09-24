@@ -1,1 +1,1 @@
-# template-repository
+# node-rabbitmq-mysql
