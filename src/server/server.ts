@@ -7,15 +7,16 @@ import { LogErrorMessage } from '@src/utils'
 import { SwaggerDocs } from '@docs/swagger/swagger'
 import { PORT } from '@src/constants/constants'
 import { AppDataSource } from '@src/data-source'
-import { User } from '@src/entity/User'
 
 export const app: Express = express()
 export const PortNum = Number(process.env.PORT!) || PORT
-// export let db: any
 
-// const connectToDatabase = async () => {
-//   db = await createConnection()
-// }
+const connectToDatabase = async () => {
+  AppDataSource.initialize().then(async () => {
+    console.log('Database connected!')
+  })
+}
+
 const listenPort = (PORT: number) => {
   app.listen(PORT, () => console.log(`Server is up & running on http://localhost:${PortNum}`))
 }
@@ -34,29 +35,11 @@ const createSwaggerDocs = () => {
 
 const start = async () => {
   try {
-    AppDataSource.initialize()
-      .then(async () => {
-        console.log('Database connected!')
-
-        await listenPort(PortNum)
-        createSwaggerDocs()
-        userBodyParser()
-        await createRoutes()
-        // Example: Create a new user
-        const user = new User()
-        user.firstName = 'John'
-        user.lastName = 'Doe'
-
-        await AppDataSource.manager.save(user)
-        console.log('User has been saved.')
-      })
-      .catch((error) => console.log(error))
-
-    // await connectToDatabase()
-    // await listenPort(Number(PortNum))
-    // createSwaggerDocs()
-    // userBodyParser()
-    // await createRoutes()
+    await connectToDatabase()
+    await listenPort(PortNum)
+    createSwaggerDocs()
+    userBodyParser()
+    await createRoutes()
   } catch (error) {
     console.log(LogErrorMessage(error))
   }
