@@ -1,8 +1,8 @@
 version: '3.9'
 
 services:
-  node-rabbitmq-mysql:
-    container_name: node-rabbitmq-mysql
+  node-rabbitmq-mysql-dev:
+    container_name: node-rabbitmq-mysql-dev
     build:
       context: .
     restart: always
@@ -11,20 +11,12 @@ services:
       - /usr/src/app/node_modules
     ports:
       - 4000:4000
-    command: sh -c "until nc -z mysql 3306; do echo 'Waiting for MySQL...'; sleep 2; done; npm run dev"
+    command: sh -c "until nc -z mysql 3306; do echo 'Waiting for MySQL...'; sleep 2; done; npm run start:dev"
     environment:
       NODE_ENV: development
       PORT: 4000
 
-      TYPEORM_CONNECTION: mysql
-      TYPEORM_HOST: mysql
-      TYPEORM_PORT: 3306
-      TYPEORM_USERNAME: root
-      TYPEORM_PASSWORD: password
-      TYPEORM_DATABASE: test
-
-      SECRET_KEY: secret
-      EXPIRATION_TIME: 25m
+      DATABASE_URL: mysql://user:pass@mysql:3306/test_db
 
       RABBITMQ_URL: amqp://user:pass@rabbitmq:5672
 
@@ -34,13 +26,15 @@ services:
 
   mysql:
     image: mysql:8.0
-    container_name: 'mysql'
+    container_name: mysql
     restart: always
     volumes:
       - mysql:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: test
+      MYSQL_PASSWORD: pass
+      MYSQL_USER: user
+      MYSQL_DATABASE: test_db
     command: --default-authentication-plugin=mysql_native_password
     ports:
       - 3306:3306

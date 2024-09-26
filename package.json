@@ -12,11 +12,13 @@
     "clean": "rm -rf build",
     "copy:yml": "cp ./docs/swagger/swagger.yml ./build/docs/swagger",
     "build": "npm run clean && tsc && npm run copy:yml",
-    "start": "npm run build && node build/src/index.js",
-    "dev": "tsx watch src/index.ts",
-    "docker:down": "docker compose down -v",
-    "docker:dev": "npm run docker:down && docker compose -f docker-compose.dev.yml up --build",
-    "docker:prod": "npm run docker:down && docker compose -f docker-compose.yml up --build"
+    "start:dev": "tsx watch src/index.ts",
+    "start:prod": "npm run build && node build/src/index.js",
+    "docker:stop": "docker stop $(docker ps -aq) && docker rm $(docker ps -aq)",
+    "docker:reset": "docker stop $(docker ps -aq) && docker rm $(docker ps -aq) && docker rmi $(docker images -q) && docker volume rm $(docker volume ls -q)",
+    "docker:dev": "npm run docker:stop && docker compose -f docker-compose.dev.yml up --build",
+    "docker:dev-reset": "npm run docker:reset && docker compose -f docker-compose.dev.yml up --build",
+    "docker:prod": "npm run docker:stop && docker-compose up --build"
   },
   "repository": {
     "type": "git",

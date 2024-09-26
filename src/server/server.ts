@@ -10,7 +10,7 @@ import { AppDataSource } from '@src/data-source'
 import { User } from '@src/entity/User'
 
 export const app: Express = express()
-export const PortNum = process.env.PORT! || PORT
+export const PortNum = Number(process.env.PORT!) || PORT
 // export let db: any
 
 // const connectToDatabase = async () => {
@@ -29,7 +29,7 @@ const createRoutes = async () => {
 }
 
 const createSwaggerDocs = () => {
-  SwaggerDocs(app, Number(PortNum))
+  SwaggerDocs(app, PortNum)
 }
 
 const start = async () => {
@@ -38,7 +38,7 @@ const start = async () => {
       .then(async () => {
         console.log('Database connected!')
 
-        await listenPort(Number(PortNum))
+        await listenPort(PortNum)
         createSwaggerDocs()
         userBodyParser()
         await createRoutes()
