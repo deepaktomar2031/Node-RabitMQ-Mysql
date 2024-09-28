@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 require('dotenv').config()
 import 'reflect-metadata'
@@ -7,14 +8,23 @@ import { LogErrorMessage } from '@src/utils'
 import { SwaggerDocs } from '@docs/swagger/swagger'
 import { PORT } from '@src/constants/constants'
 import { AppDataSource } from '@src/data-source'
+import { initializeRabbitMQ } from '@src/server/rabbitmqService'
 
 export const app: Express = express()
 export const PortNum = Number(process.env.PORT!) || PORT
+export let dataBase: any
+export let rabbitmqChannel: any
 
 const connectToDatabase = async () => {
-  AppDataSource.initialize().then(async () => {
+  AppDataSource.initialize().then(async (db) => {
     console.log('Database connected!')
+    dataBase = db
   })
+}
+
+const connectToRabbitMQ = async () => {
+  rabbitmqChannel = await initializeRabbitMQ()
+  console.log('RabbitMQ connected!')
 }
 
 const listenPort = (PORT: number) => {
@@ -36,6 +46,7 @@ const createSwaggerDocs = () => {
 const start = async () => {
   try {
     await connectToDatabase()
+    await connectToRabbitMQ()
     await listenPort(PortNum)
     createSwaggerDocs()
     userBodyParser()

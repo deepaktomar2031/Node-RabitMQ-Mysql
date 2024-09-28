@@ -14,5 +14,3 @@ export class Product {
   @Column({ type: 'varchar', default: 0 })
   likes: number
 }
-
-// export const product: Product = new Product()

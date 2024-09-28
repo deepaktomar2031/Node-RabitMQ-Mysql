@@ -18,7 +18,7 @@ services:
 
       DATABASE_URL: mysql://user:pass@mysql:3306/test_db
 
-      RABBITMQ_URL: amqp://user:pass@rabbitmq:5672
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
 
     depends_on:
       - mysql
