@@ -15,14 +15,13 @@ services:
     environment:
       NODE_ENV: development
       PORT: 4000
-
       DATABASE_URL: mysql://user:pass@mysql:3306/test_db
-
       RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
-
     depends_on:
       - mysql
       - rabbitmq
+    networks:
+      - proxynet
 
   mysql:
     image: mysql:8.0
@@ -38,6 +37,8 @@ services:
     command: --default-authentication-plugin=mysql_native_password
     ports:
       - 3306:3306
+    networks:
+      - proxynet
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -51,7 +52,14 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
+    networks:
+      - proxynet
 
 volumes:
   mysql:
   rabbitmq_data:
+
+networks:
+  proxynet:
+    name: custom_network
+    external: true
